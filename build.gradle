@@ -1,0 +1,47 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        kotlin_version = '2.0.20'
+    }
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.13.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        if (gradle.ext != null && gradle.ext.has('testDemoWithGradleLibs') && gradle.ext.testDemoWithGradleLibs) {
+            maven {
+                // Used when testDemoWithGradleLibs=true in local.properties.
+                // Provides the published org.wysaid:gpuimage-plus AAR for demo integration testing.
+                url 'https://maven.wysaid.org/'
+            }
+        }
+    }
+}
+
+ext {
+    android = [
+            compileSdkVersion: 35, // Updated to support Android 15 for 16KB page sizes
+            buildToolsVersion: '34.0.0',
+            minSdkVersion    : 21,
+            targetSdkVersion : 25, // higher target version needs more storage permission request.
+            versionCode      : 3,
+            versionName      : "3.1.2",
+            applicationId    : "org.wysaid.cgeDemo",
+            appcompatX       : "1.2.0",
+            ndkVersion       : "27.2.12479018",
+            cmakeVersion     : "3.22.1+",
+    ]
+}

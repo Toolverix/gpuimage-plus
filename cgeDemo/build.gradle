@@ -1,0 +1,79 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+def usingCMakeCompile() {
+    /// define  gradle.ext.usingCMakeCompile = false to disable CMakeCompile Mode.
+    return gradle.ext != null && gradle.ext.has("usingCMakeCompile") && gradle.ext.usingCMakeCompile;
+}
+
+def usingCMakeCompileDebug() {
+    /// define  gradle.ext.usingCMakeCompileDebug = true to enable CMake Debug Mode.
+    return gradle.ext != null && gradle.ext.has("usingCMakeCompileDebug") && gradle.ext.usingCMakeCompileDebug;
+}
+
+def enable16kPageSizes() {
+    return gradle.ext != null && gradle.ext.has("enable16kPageSizes") && gradle.ext.enable16kPageSizes;
+}
+
+def testDemoWithGradleLibs() {
+    return gradle.ext != null && gradle.ext.has("testDemoWithGradleLibs") && gradle.ext.testDemoWithGradleLibs;
+}
+
+def disableVideoModule() {
+    return gradle.ext != null && gradle.ext.has("disableVideoModule") && gradle.ext.disableVideoModule;
+}
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    if (usingCMakeCompile()) {
+        ndkVersion rootProject.ext.android.ndkVersion
+    }
+
+    defaultConfig {
+        applicationId rootProject.ext.android.applicationId
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        // Use Android 15+ (API 35) when 16KB page sizes are enabled, otherwise use default
+        targetSdkVersion enable16kPageSizes() ? 35 : rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        signingConfig signingConfigs.debug
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Use debug signing for demo APK so CI can produce a signed release APK
+            // without a dedicated keystore. This is intentional for a demo application.
+            signingConfig signingConfigs.debug
+        }
+    }
+    namespace 'org.wysaid.cgeDemo'
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    if (testDemoWithGradleLibs()) {
+        // Dynamically select the correct AAR variant based on local.properties flags.
+        // This allows testing specific published variants (e.g. 3.1.1-16k-min) from maven.
+        def baseVersion = rootProject.ext.android.versionName
+        def variant = ''
+        if (enable16kPageSizes()) variant += '-16k'
+        if (disableVideoModule()) variant += '-min'
+        implementation "org.wysaid:gpuimage-plus:${baseVersion}${variant}"
+    } else {
+        implementation project(':library')
+    }
+    implementation 'androidx.appcompat:appcompat:' + rootProject.ext.android.appcompatX
+    implementation 'androidx.core:core-ktx:1.1.0'
+
+    // CameraX runtime dependencies (library declares them as compileOnly)
+    implementation 'androidx.camera:camera-core:1.4.1'
+    implementation 'androidx.camera:camera-camera2:1.4.1'
+    implementation 'androidx.camera:camera-lifecycle:1.4.1'
+}
