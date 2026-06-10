@@ -18,9 +18,7 @@ public class NativeLibraryLoader {
             }
             System.loadLibrary("CGE");
             System.loadLibrary("CGEExt");
-            if (BuildConfig.CGE_USE_VIDEO_MODULE) {
-                CGEFFmpegNativeLibrary.avRegisterAll();
-            }
+
             onLoad();
         } catch (UnsatisfiedLinkError e) {
             // Log device info for debugging

@@ -21,7 +21,6 @@ import org.wysaid.common.Common;
 import org.wysaid.common.SharedContext;
 import org.wysaid.myUtils.FileUtil;
 import org.wysaid.myUtils.MsgUtil;
-import org.wysaid.nativePort.CGEFFmpegNativeLibrary;
 import org.wysaid.nativePort.CGEImageHandler;
 import org.wysaid.nativePort.CGENativeLibrary;
 
@@ -257,11 +256,6 @@ public class TestCaseActivity extends AppCompatActivity {
                     showMsg("Failed to create output path!");
                     return;
                 }
-
-                CGEFFmpegNativeLibrary.generateVideoWithFilter(
-                        outputPath, inputFileName,
-                        "@adjust lut late_sunset.png", 1.0f,
-                        bmp, CGENativeLibrary.TextureBlendMode.CGE_BLEND_ADDREV, 1.0f, false);
 
                 String publicPath = needsScopedStorageWrite()
                         ? "Movies/libCGE/" + displayName

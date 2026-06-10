@@ -80,7 +80,8 @@ target_include_directories(CGE PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/cge/common
     ${CMAKE_CURRENT_SOURCE_DIR}/cge/extends
     ${CMAKE_CURRENT_SOURCE_DIR}/cge/filters
-    ${CMAKE_CURRENT_SOURCE_DIR}/custom)
+    ${CMAKE_CURRENT_SOURCE_DIR}/custom
+    ${CMAKE_CURRENT_SOURCE_DIR}/interface)
 
 if(NOT DEFINED ANDROID_ABI)
     target_compile_definitions(CGE PUBLIC ANDROID_ABI=arm64-v8a)
@@ -135,7 +136,7 @@ message("CGE_USE_VIDEO_MODULE=${CGE_USE_VIDEO_MODULE}")
 file(GLOB_RECURSE CGE_EXT_SRC "${CMAKE_CURRENT_SOURCE_DIR}/custom/*.cpp")
 add_library(CGEExt SHARED ${CGE_EXT_SRC})
 
-target_include_directories(CGEExt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/custom)
+target_include_directories(CGEExt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/custom ${CMAKE_CURRENT_SOURCE_DIR}/interface)
 
 target_link_libraries(CGEExt PRIVATE
     CGE)
