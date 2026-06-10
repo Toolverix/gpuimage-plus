@@ -1,0 +1,5 @@
+jdk:
+  - 17
+
+install:
+  - ./gradlew clean publishToMavenLocal -Pgroup=com.github.Toolverix -Pversion=1.0.0 -PdeployArtifacts=true

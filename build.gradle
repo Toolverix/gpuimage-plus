@@ -45,3 +45,10 @@ ext {
             cmakeVersion     : "3.22.1+",
     ]
 }
+
+// JitPack compatibility: expose publishToMavenLocal at root level
+task publishToMavenLocal {
+    dependsOn ':library:publishToMavenLocal'
+    group = "publishing"
+    description = "Publish library module to local Maven repository for JitPack"
+}
